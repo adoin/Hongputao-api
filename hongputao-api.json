@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "version": "1.0.0",
+  "search": {
+    "path": "/api/search/result",
+    "keyword": "query",
+    "page": "page",
+    "items": "searchList",
+    "currentPage": "pageNum",
+    "totalPages": "totalPages",
+    "total": "totalCount"
+  },
+  "recommendations": {
+    "path": "/detail",
+    "series": "series_id",
+    "group": "recommendationGroups",
+    "items": "related_list"
+  },
+  "playback": ["openhongguo"]
+}

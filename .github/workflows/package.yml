@@ -1,0 +1,31 @@
+name: Publish API package
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: python3 scripts/validate.py
+  publish:
+    needs: validate
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Publish verified package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/validate.py
+          gh release create "$GITHUB_REF_NAME" hongputao-api.json --verify-tag --title "红葡萄 API ${GITHUB_REF_NAME#v}" --generate-notes
