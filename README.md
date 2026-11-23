@@ -1,6 +1,6 @@
 # 红葡萄 API 包
 
-红葡萄 Windows 和 Android 的来源规则包。程序启动先使用内置或上次验证通过的规则，再检查这个仓库的最新正式 Release。已发布的包由 GitHub Release 提供 SHA-256 摘要。
+红葡萄 Windows 和 Android 的来源规则包。程序启动先使用内置或上次验证通过的规则。有已登录 GitHub CLI 的 Windows 客户端读取 Release，其余客户端读取 [GitHub Pages 静态更新入口](https://adoin.github.io/Hongputao-api/feed.json)，避免匿名 API 的限流。两条入口都包含包摘要。
 
 | 规则 | 可更新内容 |
 |---|---|

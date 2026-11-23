@@ -29,3 +29,25 @@ jobs:
         run: |
           python3 scripts/validate.py
           gh release create "$GITHUB_REF_NAME" hongputao-api.json --verify-tag --title "红葡萄 API ${GITHUB_REF_NAME#v}" --generate-notes
+  deploy-feed:
+    needs: publish
+    runs-on: ubuntu-latest
+    concurrency:
+      group: api-pages
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/configure-pages@v5
+      - run: python3 scripts/build_feed.py
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - uses: actions/deploy-pages@v4
+        id: deployment
