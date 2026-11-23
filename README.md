@@ -13,3 +13,9 @@
 修改 `hongputao-api.json` 后，运行 `python3 scripts/validate.py`。测试搜索分页、推荐和实际播放，再提交并推送与包内版本一致的 `vMAJOR.MINOR.PATCH` Tag。Actions 校验并发布 `hongputao-api.json`。回退时用更高版本重新发布已验证的旧规则内容。
 
 规则按 GPL-3.0-only 提供，见 `LICENSE`。
+
+### EdgeOne 主源与 VPS 备用源
+
+在仓库 Actions 中配置 `EDGEONE_PROJECT`、`EDGEONE_SITE`，将 Pages API Token 存入 Secret `EDGEONE_API_TOKEN`。Tag 出包后会自动把静态文件部署到 EdgeOne。客户端构建参数 `HONGPUTAO_API_FEED` 绑定 EdgeOne 项目的公开 `feed.json`。
+
+VPS 使用独立 HTTPS 静态目录。运行 `python3 scripts/sync_vps.py /srv/hongputao-api/feed.json` 可以把已发布的规则拉到本地并原子更新，适合配置成服务器定时任务。客户端构建参数 `HONGPUTAO_API_FALLBACK_FEED` 绑定 VPS 上的 `feed.json`。客户端按主源、备用源尝试，配置其中任一项后不会再查 GitHub。VPS 单独从发布附件同步，不依赖 EdgeOne。

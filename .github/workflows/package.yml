@@ -27,8 +27,31 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          python3 scripts/validate.py
-          gh release create "$GITHUB_REF_NAME" hongputao-api.json --verify-tag --title "红葡萄 API ${GITHUB_REF_NAME#v}" --generate-notes
+          python3 scripts/build_feed.py
+          gh release create "$GITHUB_REF_NAME" hongputao-api.json _site/feed.json --verify-tag --title "红葡萄 API ${GITHUB_REF_NAME#v}" --generate-notes
+  deploy-edgeone:
+    needs: publish
+    if: vars.EDGEONE_PROJECT != ''
+    runs-on: ubuntu-latest
+    concurrency:
+      group: api-edgeone
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - run: python3 scripts/build_feed.py
+      - name: Deploy static update feed to EdgeOne
+        env:
+          EDGEONE_PROJECT: ${{ vars.EDGEONE_PROJECT }}
+          EDGEONE_SITE: ${{ vars.EDGEONE_SITE }}
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+        shell: bash
+        run: |
+          test -n "$EDGEONE_API_TOKEN"
+          case "$EDGEONE_SITE" in china|global) ;; *) echo "EDGEONE_SITE must be china or global"; exit 1;; esac
+          npx --yes --package=edgeone@1.7.6 edgeone makers deploy ./_site -n "$EDGEONE_PROJECT" -t "$EDGEONE_API_TOKEN" --site "$EDGEONE_SITE" -e production
   deploy-feed:
     needs: publish
     runs-on: ubuntu-latest
