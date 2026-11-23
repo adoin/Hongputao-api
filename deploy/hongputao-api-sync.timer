@@ -1,0 +1,10 @@
+[Unit]
+Description=Keep the Hongputao API mirror current
+
+[Timer]
+OnBootSec=45s
+OnUnitActiveSec=3min
+RandomizedDelaySec=15s
+
+[Install]
+WantedBy=timers.target

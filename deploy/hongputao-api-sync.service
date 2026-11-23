@@ -1,0 +1,16 @@
+[Unit]
+Description=Sync the Hongputao API feed
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+ExecStart=/usr/bin/python3 /opt/hongputao-api/sync_vps.py /srv/hongputao-api/feed.json
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+NoNewPrivileges=true
+ReadWritePaths=/srv/hongputao-api
+TimeoutStartSec=40

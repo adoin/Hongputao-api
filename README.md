@@ -19,3 +19,5 @@
 在仓库 Actions 中配置 `EDGEONE_PROJECT`、`EDGEONE_SITE`，将 Pages API Token 存入 Secret `EDGEONE_API_TOKEN`。Tag 出包后会自动把静态文件部署到 EdgeOne。客户端构建参数 `HONGPUTAO_API_FEED` 绑定 EdgeOne 项目的公开 `feed.json`。
 
 VPS 使用独立 HTTPS 静态目录。运行 `python3 scripts/sync_vps.py /srv/hongputao-api/feed.json` 可以把已发布的规则拉到本地并原子更新，适合配置成服务器定时任务。客户端构建参数 `HONGPUTAO_API_FALLBACK_FEED` 绑定 VPS 上的 `feed.json`。客户端按主源、备用源尝试，配置其中任一项后不会再查 GitHub。VPS 单独从发布附件同步，不依赖 EdgeOne。
+
+Linux 可用 `deploy/` 的 systemd 模板。将同步脚本放到 `/opt/hongputao-api/`，将 `/srv/hongputao-api/` 授予该服务的运行账号写入权限。准备独立 HTTPS 虚拟主机，只公开静态目录里的 `feed.json`。首次执行服务并验证 HTTPS 响应后再启用定时器。
