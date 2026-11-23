@@ -17,7 +17,9 @@
 
 ### EdgeOne 主源与 VPS 备用源
 
-在仓库 Actions 中配置 `EDGEONE_PROJECT`、`EDGEONE_SITE`，将 Pages API Token 存入 Secret `EDGEONE_API_TOKEN`。Tag 出包后会自动把静态文件部署到 EdgeOne。客户端构建参数 `HONGPUTAO_API_FEED` 绑定 EdgeOne 项目的公开 `feed.json`。
+EdgeOne Makers 项目 `hongputao-api` 从本仓库的 `edgeone-feed` 分支部署。正式 Tag 发布成功后，Actions 使用仓库自带的令牌更新此分支。EdgeOne 直接部署仓库根目录中的静态文件，无需构建命令或额外的 EdgeOne Token。
+
+项目加速区域选用「全球可用区（不含中国大陆）」。为面向中国大陆的客户端配置自定义 HTTPS 域名，验证公开 `/feed.json` 可访问后，再将其设为客户端构建参数 `HONGPUTAO_API_FEED`。
 
 VPS 使用独立 HTTPS 静态目录。运行 `python3 scripts/sync_vps.py /srv/hongputao-api/feed.json` 可以把已发布的规则拉到本地并原子更新，适合配置成服务器定时任务。客户端构建参数 `HONGPUTAO_API_FALLBACK_FEED` 绑定 VPS 上的 `feed.json`。客户端按主源、备用源尝试，配置其中任一项后不会再查 GitHub。VPS 单独从发布附件同步，不依赖 EdgeOne。
 
