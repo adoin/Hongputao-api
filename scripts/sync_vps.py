@@ -61,7 +61,7 @@ def verified_version(raw):
     if feed["digest"] != "sha256:" + hashlib.sha256(payload).hexdigest():
         raise ValueError("Package checksum mismatch")
     package = json.loads(payload)
-    if package["schema"] != 1 or package["version"] != version:
+    if package["schema"] not in (1, 2) or package["version"] != version:
         raise ValueError("Unsupported package or version mismatch")
     return tuple(map(int, version.split(".")))
 

@@ -22,8 +22,16 @@ def validate_section(section, keys):
 raw = (Path(__file__).resolve().parents[1] / "hongputao-api.json").read_bytes()
 require(len(raw) <= 16_384, "package too large")
 data = json.loads(raw)
-require(set(data) == {"schema", "version", "search", "recommendations", "playback"}, "invalid package fields")
-require(type(data["schema"]) is int and data["schema"] == 1, "unsupported schema")
+schema = data.get("schema")
+require(type(schema) is int and schema in (1, 2), "unsupported schema")
+fields = {"schema", "version", "search", "recommendations", "playback"}
+if schema == 2:
+    fields.add("theater")
+require(set(data) == fields, "invalid package fields")
+if schema == 2:
+    rule = data["theater"]
+    require(isinstance(rule, dict) and set(rule) == {"channel"} and
+            rule["channel"] in ("找剧", "首页真人剧", "首页漫剧"), "invalid theater channel")
 version = data["version"]
 require(isinstance(version, str) and re.fullmatch(r"(0|[1-9][0-9]{0,5})\.(0|[1-9][0-9]{0,5})\.(0|[1-9][0-9]{0,5})", version), "invalid version")
 validate_section(data["search"], {"path", "keyword", "page", "items", "currentPage", "totalPages", "total"})
